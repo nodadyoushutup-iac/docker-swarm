@@ -1,0 +1,7 @@
+appearance:
+  pipelineGraphView:
+    showGraphOnBuildPage: true
+    showGraphOnJobPage: true
+  themeManager:
+    disableUserThemes: false
+    theme: "dark"
