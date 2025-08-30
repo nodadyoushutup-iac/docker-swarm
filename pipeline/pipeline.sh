@@ -4,6 +4,9 @@ set -euo pipefail
 DOCKER_TFVARS="$HOME/.tfvars/docker/jenkins.tfvars"
 APP_TFVARS="$HOME/.tfvars/jenkins.tfvars"
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="${SCRIPT_DIR}/.."
+
 usage() {
   cat <<'EOT'
 Usage:
@@ -48,9 +51,9 @@ apply_dir() {
 }
 
 echo "[STAGE 1] docker"
-apply_dir docker "$DOCKER_TFVARS"
+apply_dir "${ROOT_DIR}/docker" "$DOCKER_TFVARS"
 
 echo "[STAGE 2] jenkins"
-apply_dir jenkins "$APP_TFVARS"
+apply_dir "${ROOT_DIR}/jenkins" "$APP_TFVARS"
 
 echo "[DONE] Apply complete."
