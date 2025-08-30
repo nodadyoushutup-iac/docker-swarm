@@ -111,8 +111,22 @@ resource "docker_service" "jenkins_controller" {
   }
 }
 
-resource "docker_service" "jenkins_agent" {
+resource "null_resource" "wait_for_service" {
   depends_on = [docker_service.jenkins_controller]
+  triggers = {
+    endpoint     = "http://192.168.1.110:8080/whoAmI/api/json?tree=authenticated"
+    delay        = "5"
+    max_attempts = "60"
+    script_sha1  = filesha1("${path.module}/script/healthcheck.sh")
+  }
+
+  provisioner "local-exec" {
+    command = "MAX_ATTEMPTS=60 TIMEOUT=5 bash ${path.module}/script/healthcheck.sh http://192.168.1.110:8080/whoAmI/api/json?tree=authenticated 5"
+  }
+}
+
+resource "docker_service" "jenkins_agent" {
+  depends_on = [null_resource.wait_for_service]
   name       = "jenkins-agent-terraform"
 
   task_spec {
@@ -120,7 +134,7 @@ resource "docker_service" "jenkins_agent" {
       image = "ghcr.io/nodadyoushutup/jenkins-agent:3283.v92c105e0f819-7"
 
       env = {
-        JENKINS_URL        = "http://192.168.1.110:8080/"
+        JENKINS_URL = "http://192.168.1.110:8080/"
         JENKINS_AGENT_NAME = "terraform"
       }
 
@@ -169,21 +183,7 @@ resource "docker_service" "jenkins_agent" {
         nameservers = ["1.1.1.1", "8.8.8.8"]
       }
 
-      command = ["/agent-entrypoint.sh"]
+      # command = ["/agent-entrypoint.sh"] # Commented for now
     }
-  }
-}
-
-resource "null_resource" "wait_for_service" {
-  depends_on = [docker_service.jenkins_controller]
-  triggers = {
-    endpoint     = "http://192.168.1.110:8080/whoAmI/api/json?tree=authenticated"
-    delay        = "5"
-    max_attempts = "60"
-    script_sha1  = filesha1("${path.module}/script/healthcheck.sh")
-  }
-
-  provisioner "local-exec" {
-    command = "MAX_ATTEMPTS=60 TIMEOUT=5 bash ${path.module}/script/healthcheck.sh http://192.168.1.110:8080/whoAmI/api/json?tree=authenticated 5"
   }
 }
