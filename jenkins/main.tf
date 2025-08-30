@@ -19,7 +19,6 @@ resource "jenkins_job" "terraform_proxmox" {
     scm_repository_url = "https://github.com/nodadyoushutup/terraform-proxmox"
     script_path        = "pipeline/pipeline.jenkins"
     auto_approve       = local.job_parameters.terraform_proxmox.auto_approve
-    docker_tfvars      = ""
-    app_tfvars         = ""
+    app_tfvars         = local.job_parameters.terraform_jenkins.app_tfvars
   })
 }
