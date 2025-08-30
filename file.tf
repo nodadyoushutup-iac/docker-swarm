@@ -129,7 +129,7 @@ resource "jenkins_job" "terraform_jenkins" {
     scm_repository_url = "https://github.com/nodadyoushutup/terraform-jenkins"
     script_path        = "pipeline.jenkins"
     auto_approve       = local.job_parameters.terraform_jenkins.auto_approve
-    service            = local.job_parameters.terraform_jenkins.service
+    tfvars             = local.job_parameters.terraform_jenkins.tfvars
   })
 }
 
@@ -142,6 +142,6 @@ resource "jenkins_job" "terraform_proxmox" {
     scm_repository_url = "https://github.com/nodadyoushutup/terraform-proxmox"
     script_path        = "pipeline.jenkins"
     auto_approve       = local.job_parameters.terraform_proxmox.auto_approve
-    service            = local.job_parameters.terraform_proxmox.service
+    tfvars             = local.job_parameters.terraform_proxmox.tfvars
   })
 }

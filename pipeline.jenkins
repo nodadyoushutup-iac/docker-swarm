@@ -10,8 +10,8 @@ pipeline {
       steps {
         script {
           def varFile = ''
-          if (params.SERVICE?.trim()) {
-            varFile = "${env.HOME}/.tfvars/${params.SERVICE}.tfvars"
+          if (params.TFVARS?.trim()) {
+            varFile = params.TFVARS.trim()
           } else {
             varFile = sh(
               script: '''
@@ -20,10 +20,10 @@ pipeline {
                 if [ ${#matches[@]} -eq 1 ]; then
                   echo ${matches[0]}
                 elif [ ${#matches[@]} -eq 0 ]; then
-                  echo "[ERR] No *.tfvars found in current directory. Provide a service." >&2
+                  echo "[ERR] No *.tfvars found in current directory. Provide a tfvars path." >&2
                   exit 1
                 else
-                  echo "[ERR] Multiple *.tfvars found in current directory. Specify a service." >&2
+                  echo "[ERR] Multiple *.tfvars found in current directory. Specify a tfvars file." >&2
                   exit 1
                 fi
               ''',

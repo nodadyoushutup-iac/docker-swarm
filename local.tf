@@ -144,11 +144,11 @@ locals {
   job_parameters = {
     terraform_jenkins = {
       auto_approve = false
-      service      = ""
+      tfvars       = ""
     }
     terraform_proxmox = {
       auto_approve = false
-      service      = "proxmox"
+      tfvars       = "~/.tfvars/proxmox.tfvars"
     }
   }
 }
