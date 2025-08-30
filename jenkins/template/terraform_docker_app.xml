@@ -26,6 +26,12 @@
                                         <defaultValue>${app_tfvars}</defaultValue>
                                         <trim>false</trim>
                                 </hudson.model.StringParameterDefinition>
+                                <hudson.model.StringParameterDefinition>
+                                        <name>APP_SUBDIR</name>
+                                        <description>Path to application subdir</description>
+                                        <defaultValue>${app_subdir}</defaultValue>
+                                        <trim>false</trim>
+                                </hudson.model.StringParameterDefinition>
                         </parameterDefinitions>
                 </hudson.model.ParametersDefinitionProperty>
         </properties>
