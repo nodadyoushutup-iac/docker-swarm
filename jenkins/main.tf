@@ -8,7 +8,6 @@ resource "jenkins_job" "terraform_jenkins" {
     auto_approve       = local.job_parameters.terraform_jenkins.auto_approve
     docker_tfvars      = local.job_parameters.terraform_jenkins.docker_tfvars
     app_tfvars         = local.job_parameters.terraform_jenkins.app_tfvars
-    app_subdir         = local.job_parameters.terraform_jenkins.app_subdir
   })
 }
 
