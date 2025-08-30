@@ -1,31 +1,34 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-AUTO_APPROVE=false
+DOCKER_TFVARS=""
+JENKINS_TFVARS=""
 
 usage() {
   cat <<'EOT'
 Usage:
-  ./pipeline.sh [--auto-approve]
+  ./pipeline.sh [--docker-tfvars FILE] [--jenkins-tfvars FILE]
 
 Runs terraform init/plan/apply for:
   1. docker/
   2. jenkins/
 
 Options:
-  --auto-approve  Pass -auto-approve to 'terraform apply' (non-interactive)
-  -h, --help      Show this help
+  --docker-tfvars FILE   Pass -var-file=FILE when running in docker/
+  --jenkins-tfvars FILE  Pass -var-file=FILE when running in jenkins/
+  -h, --help             Show this help
 EOT
 }
 
 # Parse flags
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --auto-approve) AUTO_APPROVE=true; shift ;;
-    -h|--help)      usage; exit 0 ;;
-    --)             shift; break ;;
-    -*)             echo "[ERR] Unknown option: $1" >&2; usage; exit 2 ;;
-    *)              echo "[ERR] Unexpected argument: $1" >&2; usage; exit 2 ;;
+    --docker-tfvars) DOCKER_TFVARS="$2"; shift 2 ;;
+    --jenkins-tfvars) JENKINS_TFVARS="$2"; shift 2 ;;
+    -h|--help) usage; exit 0 ;;
+    --) shift; break ;;
+    -*) echo "[ERR] Unknown option: $1" >&2; usage; exit 2 ;;
+    *)  echo "[ERR] Unexpected argument: $1" >&2; usage; exit 2 ;;
   esac
 done
 
@@ -33,26 +36,21 @@ command -v terraform >/dev/null 2>&1 || { echo "[ERR] terraform not found in PAT
 
 apply_dir() {
   local DIR="$1"
+  local TFVARS="$2"
   echo "[STEP] terraform -chdir=${DIR} init"
   terraform -chdir="$DIR" init -input=false
 
-  if $AUTO_APPROVE; then
-    echo "[STEP] terraform -chdir=${DIR} apply (auto-approve)"
-    terraform -chdir="$DIR" apply -input=false -auto-approve
-  else
-    echo "[STEP] terraform -chdir=${DIR} plan"
-    terraform -chdir="$DIR" plan -input=false
-    echo "[STEP] terraform -chdir=${DIR} apply (will prompt)"
-    if [[ "${TF_CLI_ARGS_apply:-}" == *"-auto-approve"* ]]; then
-      echo "[WARN] TF_CLI_ARGS_apply contains -auto-approve; temporarily removing so you get a prompt."
-      TF_CLI_ARGS_apply="${TF_CLI_ARGS_apply//-auto-approve/}" terraform -chdir="$DIR" apply
-    else
-      terraform -chdir="$DIR" apply
-    fi
-  fi
+  echo "[STEP] terraform -chdir=${DIR} plan"
+  terraform -chdir="$DIR" plan -input=false ${TFVARS:+-var-file="$TFVARS"}
+
+  echo "[STEP] terraform -chdir=${DIR} apply"
+  terraform -chdir="$DIR" apply -input=false -auto-approve ${TFVARS:+-var-file="$TFVARS"}
 }
 
-apply_dir docker
-apply_dir jenkins
+echo "[STAGE 1] docker"
+apply_dir docker "$DOCKER_TFVARS"
+
+echo "[STAGE 2] jenkins"
+apply_dir jenkins "$JENKINS_TFVARS"
 
 echo "[DONE] Apply complete."
