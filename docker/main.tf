@@ -118,6 +118,7 @@ resource "null_resource" "wait_for_service" {
     delay        = "5"
     max_attempts = "60"
     script_sha1  = filesha1("${path.module}/script/healthcheck.sh")
+    script2_sha1  = filesha1("${path.module}/script/agent-entrypoint.sh")
   }
 
   provisioner "local-exec" {
@@ -127,14 +128,14 @@ resource "null_resource" "wait_for_service" {
 
 resource "docker_service" "jenkins_agent" {
   depends_on = [null_resource.wait_for_service]
-  name       = "jenkins-agent-terraform"
+  name = "jenkins-agent-terraform"
 
   task_spec {
     container_spec {
       image = "ghcr.io/nodadyoushutup/jenkins-agent:3283.v92c105e0f819-7"
 
       env = {
-        JENKINS_URL = "http://192.168.1.110:8080/"
+        JENKINS_URL = "http://192.168.1.110:8080"
         JENKINS_AGENT_NAME = "terraform"
       }
 
@@ -150,25 +151,25 @@ resource "docker_service" "jenkins_agent" {
       }
 
       mounts {
-        target = "/var/jenkins_home/.jenkins"
+        target = "/home/jenkins/.jenkins"
         source = pathexpand("~/.jenkins")
         type   = "bind"
       }
 
       mounts {
-        target = "/var/jenkins_home/.ssh"
+        target = "/home/jenkins/.ssh"
         source = pathexpand("~/.ssh")
         type   = "bind"
       }
 
       mounts {
-        target = "/var/jenkins_home/.kube"
+        target = "/home/jenkins/.kube"
         source = pathexpand("~/.kube")
         type   = "bind"
       }
 
       mounts {
-        target = "/var/jenkins_home/.tfvars"
+        target = "/home/jenkins/.tfvars"
         source = pathexpand("~/.tfvars")
         type   = "bind"
       }
@@ -183,7 +184,8 @@ resource "docker_service" "jenkins_agent" {
         nameservers = ["1.1.1.1", "8.8.8.8"]
       }
 
-      # command = ["/agent-entrypoint.sh"] # Commented for now
+      # command = ["/agent-entrypoint.sh"]
+      command = ["/bin/sh", "-c", "/agent-entrypoint.sh"]
     }
   }
 }
