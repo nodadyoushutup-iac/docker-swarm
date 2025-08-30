@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-DOCKER_TFVARS=""
-JENKINS_TFVARS=""
+DOCKER_TFVARS="$HOME/.tfvars/docker/jenkins.tfvars"
+JENKINS_TFVARS="$HOME/.tfvars/jenkins.tfvars"
 
 usage() {
   cat <<'EOT'
