@@ -8,7 +8,7 @@ terraform {
 }
 
 provider "jenkins" {
-  server_url = "http://192.168.1.110:8080/"
-  username   = "admin"
-  password   = "password"
+  server_url = var.provider_config.server_url
+  username   = var.provider_config.username
+  password   = var.provider_config.password
 }

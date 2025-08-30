@@ -2,6 +2,8 @@ pipeline {
   agent any
   parameters {
     booleanParam(name: 'AUTO_APPROVE', defaultValue: false, description: 'Pass -auto-approve to terraform apply')
+    string(name: 'DOCKER_TFVARS_FILE', defaultValue: '~/.tfvars/docker/jenkins.tfvars', description: 'Path to Docker tfvars file')
+    string(name: 'JENKINS_TFVARS_FILE', defaultValue: '~/.tfvars/jenkins.tfvars', description: 'Path to Jenkins tfvars file')
   }
   stages {
     stage('Docker') {
@@ -9,10 +11,10 @@ pipeline {
         script {
           sh 'terraform -chdir=docker init -input=false'
           if (params.AUTO_APPROVE) {
-            sh 'terraform -chdir=docker apply -input=false -auto-approve'
+            sh "terraform -chdir=docker apply -input=false -auto-approve -var-file=${params.DOCKER_TFVARS_FILE}"
           } else {
-            sh 'terraform -chdir=docker plan -input=false'
-            sh 'terraform -chdir=docker apply'
+            sh "terraform -chdir=docker plan -input=false -var-file=${params.DOCKER_TFVARS_FILE}"
+            sh "terraform -chdir=docker apply -var-file=${params.DOCKER_TFVARS_FILE}"
           }
         }
       }
@@ -22,10 +24,10 @@ pipeline {
         script {
           sh 'terraform -chdir=jenkins init -input=false'
           if (params.AUTO_APPROVE) {
-            sh 'terraform -chdir=jenkins apply -input=false -auto-approve'
+            sh "terraform -chdir=jenkins apply -input=false -auto-approve -var-file=${params.JENKINS_TFVARS_FILE}"
           } else {
-            sh 'terraform -chdir=jenkins plan -input=false'
-            sh 'terraform -chdir=jenkins apply'
+            sh "terraform -chdir=jenkins plan -input=false -var-file=${params.JENKINS_TFVARS_FILE}"
+            sh "terraform -chdir=jenkins apply -var-file=${params.JENKINS_TFVARS_FILE}"
           }
         }
       }
