@@ -4,10 +4,10 @@ resource "jenkins_job" "terraform_jenkins" {
     description        = "Jenkins assets"
     project_url        = "https://github.com/nodadyoushutup/terraform-jenkins"
     scm_repository_url = "https://github.com/nodadyoushutup/terraform-jenkins"
-    script_path        = "jenkins/pipeline.jenkins"
+    script_path        = "pipeline/pipeline.jenkins"
     auto_approve       = local.job_parameters.terraform_jenkins.auto_approve
     docker_tfvars      = local.job_parameters.terraform_jenkins.docker_tfvars
-    app_tfvars     = local.job_parameters.terraform_jenkins.app_tfvars
+    app_tfvars         = local.job_parameters.terraform_jenkins.app_tfvars
   })
 }
 
@@ -17,9 +17,9 @@ resource "jenkins_job" "terraform_proxmox" {
     description        = "Proxmox assets"
     project_url        = "https://github.com/nodadyoushutup/terraform-proxmox"
     scm_repository_url = "https://github.com/nodadyoushutup/terraform-proxmox"
-    script_path        = "pipeline.jenkins"
+    script_path        = "pipeline/pipeline.jenkins"
     auto_approve       = local.job_parameters.terraform_proxmox.auto_approve
     docker_tfvars      = ""
-    app_tfvars     = ""
+    app_tfvars         = ""
   })
 }
