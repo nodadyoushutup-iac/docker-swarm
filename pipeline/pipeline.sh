@@ -37,6 +37,12 @@ done
 
 command -v terraform >/dev/null 2>&1 || { echo "[ERR] terraform not found in PATH" >&2; exit 127; }
 
+echo "[STAGE 0] verify params"
+[[ -n "$DOCKER_TFVARS" ]] || { echo "[ERR] DOCKER_TFVARS is not set" >&2; exit 1; }
+[[ -f "$DOCKER_TFVARS" ]] || { echo "[ERR] DOCKER_TFVARS file not found: $DOCKER_TFVARS" >&2; exit 1; }
+[[ -n "$APP_TFVARS" ]] || { echo "[ERR] APP_TFVARS is not set" >&2; exit 1; }
+[[ -f "$APP_TFVARS" ]] || { echo "[ERR] APP_TFVARS file not found: $APP_TFVARS" >&2; exit 1; }
+
 apply_dir() {
   local DIR="$1"
   local TFVARS="$2"

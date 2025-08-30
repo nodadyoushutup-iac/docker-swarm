@@ -1,11 +1,26 @@
 pipeline {
   agent any
-  parameters {
-    booleanParam(name: 'AUTO_APPROVE', defaultValue: false, description: 'Pass -auto-approve to terraform apply')
-    string(name: 'DOCKER_TFVARS_FILE', defaultValue: '~/.tfvars/docker/jenkins.tfvars', description: 'Path to Docker tfvars file')
-    string(name: 'APP_TFVARS_FILE', defaultValue: '~/.tfvars/jenkins.tfvars', description: 'Path to Jenkins tfvars file')
-  }
   stages {
+    stage('Validate Parameters') {
+      steps {
+        script {
+          if (params.AUTO_APPROVE == null) {
+            error 'AUTO_APPROVE parameter is not set'
+          }
+
+          def files = [
+            DOCKER_TFVARS_FILE: params.DOCKER_TFVARS_FILE,
+            APP_TFVARS_FILE   : params.APP_TFVARS_FILE
+          ]
+          files.each { name, path ->
+            if (!path?.trim()) {
+              error "${name} parameter is not set"
+            }
+            sh "test -f ${path}"
+          }
+        }
+      }
+    }
     stage('Docker') {
       steps {
         script {
