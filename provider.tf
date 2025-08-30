@@ -22,7 +22,7 @@ provider "docker" {
 }
 
 provider "jenkins" {
-    server_url = "http://192.168.1.110:8080/"
-    username   = "admin"
-    password   = "password"
+  server_url = "http://192.168.1.110:8080/"
+  username   = "admin"
+  password   = "password"
 }

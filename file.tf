@@ -11,6 +11,11 @@ resource "docker_config" "casc_config" {
   data = base64encode(yamlencode(local.casc_config))
 }
 
+resource "docker_config" "agent_entrypoint" {
+  name = "agent-entrypoint.sh"
+  data = base64encode(file(("${path.module}/script/agent-entrypoint.sh")))
+}
+
 resource "docker_config" "export_agent_secret" {
   name = "export-agent-secret.groovy"
   data = base64encode(file(("${path.module}/init.groovy.d/export-agent-secret.groovy")))
@@ -104,6 +109,69 @@ resource "docker_service" "jenkins_controller" {
       publish_mode   = "ingress"
     }
   }
+}
+
+resource "docker_service" "jenkins_agent" {
+    depends_on = [ docker_service.jenkins_controller ]
+    name = "jenkins-agent-terraform"
+
+    task_spec {
+        container_spec {
+        image = "ghcr.io/nodadyoushutup/jenkins-agent:3283.v92c105e0f819-7"
+
+        env = {
+            JENKINS_URL = "http://192.168.1.110:8080/"
+            JENKINS_AGENT_NAME = "terraform"
+        }
+
+        mounts {
+            target = "/home/jenkins"
+            source = docker_volume.jenkins_agent.name
+            type   = "volume"
+        }
+        mounts {
+            target = "/dev/kvm"
+            source = "/dev/kvm"
+            type   = "bind"
+        }
+
+        mounts {
+            target = "/var/jenkins_home/.jenkins"
+            source = pathexpand("~/.jenkins")
+            type   = "bind"
+        }
+
+        mounts {
+            target = "/var/jenkins_home/.ssh"
+            source = pathexpand("~/.ssh")
+            type   = "bind"
+        }
+
+        mounts {
+            target = "/var/jenkins_home/.kube"
+            source = pathexpand("~/.kube")
+            type   = "bind"
+        }
+
+        mounts {
+            target = "/var/jenkins_home/.tfvars"
+            source = pathexpand("~/.tfvars")
+            type   = "bind"
+        }
+
+        configs {
+            config_id   = docker_config.agent_entrypoint.id
+            config_name = docker_config.agent_entrypoint.name
+            file_name   = "/agent-entrypoint.sh"
+        }
+
+        dns_config {
+            nameservers = ["1.1.1.1", "8.8.8.8"]
+        }
+
+        command = ["/agent-entrypoint.sh"]
+        }
+    }
 }
 
 resource "null_resource" "wait_for_service" {
