@@ -18,19 +18,19 @@
                                         <name>DOCKER_TFVARS_FILE</name>
                                         <description>Path to Docker tfvars file</description>
                                         <defaultValue>${docker_tfvars}</defaultValue>
-                                        <trim>false</trim>
+                                        <trim>true</trim>
                                 </hudson.model.StringParameterDefinition>
                                 <hudson.model.StringParameterDefinition>
                                         <name>APP_TFVARS_FILE</name>
                                         <description>Path to application tfvars file</description>
                                         <defaultValue>${app_tfvars}</defaultValue>
-                                        <trim>false</trim>
+                                        <trim>true</trim>
                                 </hudson.model.StringParameterDefinition>
                                 <hudson.model.StringParameterDefinition>
                                         <name>APP_SUBDIR</name>
                                         <description>Path to application subdir</description>
                                         <defaultValue>${app_subdir}</defaultValue>
-                                        <trim>false</trim>
+                                        <trim>true</trim>
                                 </hudson.model.StringParameterDefinition>
                         </parameterDefinitions>
                 </hudson.model.ParametersDefinitionProperty>
