@@ -14,3 +14,9 @@ terraform -chdir=jenkins apply
 ```
 
 The `pipeline.sh` and Jenkins pipeline use this two-stage approach automatically.
+
+Use the helper script to run both stages at once, optionally passing tfvars files:
+
+```bash
+./pipeline.sh --docker-tfvars docker.tfvars --jenkins-tfvars jenkins.tfvars
+```
