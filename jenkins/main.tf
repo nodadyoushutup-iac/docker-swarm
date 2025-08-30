@@ -12,14 +12,15 @@ resource "jenkins_job" "terraform_jenkins" {
   })
 }
 
-resource "jenkins_job" "terraform_proxmox" {
-  name = "terraform-proxmox"
-  template = templatefile("${path.module}/template/terraform_app.xml", {
-    description        = "Proxmox assets"
-    project_url        = "https://github.com/nodadyoushutup/terraform-proxmox"
-    scm_repository_url = "https://github.com/nodadyoushutup/terraform-proxmox"
-    script_path        = "pipeline/pipeline.jenkins"
-    auto_approve       = local.job_parameters.terraform_proxmox.auto_approve
-    app_tfvars         = local.job_parameters.terraform_jenkins.app_tfvars
-  })
-}
+# LEAVE COMMENTED
+# resource "jenkins_job" "terraform_proxmox" {
+#   name = "terraform-proxmox"
+#   template = templatefile("${path.module}/template/terraform_app.xml", {
+#     description        = "Proxmox assets"
+#     project_url        = "https://github.com/nodadyoushutup/terraform-proxmox"
+#     scm_repository_url = "https://github.com/nodadyoushutup/terraform-proxmox"
+#     script_path        = "pipeline/pipeline.jenkins"
+#     auto_approve       = local.job_parameters.terraform_proxmox.auto_approve
+#     app_tfvars         = local.job_parameters.terraform_jenkins.app_tfvars
+#   })
+# }
