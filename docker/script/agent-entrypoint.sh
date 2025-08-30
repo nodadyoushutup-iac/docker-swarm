@@ -9,7 +9,7 @@ done
 
 echo "Jenkins is ready. Starting agent..."
 
-SECRET_FILE=~/.jenkins/terraform.secret
+SECRET_FILE=~/.jenkins/$JENKINS_AGENT_NAME.secret
 # Wait for the controller to write the secret
 while [ ! -s "$SECRET_FILE" ]; do
   echo "Waiting for agent secret..."

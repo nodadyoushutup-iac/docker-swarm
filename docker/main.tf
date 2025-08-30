@@ -178,13 +178,13 @@ resource "docker_service" "jenkins_agent" {
         config_id   = docker_config.agent_entrypoint.id
         config_name = docker_config.agent_entrypoint.name
         file_name   = "/agent-entrypoint.sh"
+        file_mode = 511
       }
 
       dns_config {
         nameservers = ["1.1.1.1", "8.8.8.8"]
       }
 
-      # command = ["/agent-entrypoint.sh"]
       command = ["/bin/sh", "-c", "/agent-entrypoint.sh"]
     }
   }

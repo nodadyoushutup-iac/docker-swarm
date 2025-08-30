@@ -60,6 +60,6 @@ echo "[STAGE 1] docker"
 apply_dir "${ROOT_DIR}/docker" "$DOCKER_TFVARS"
 
 echo "[STAGE 2] jenkins"
-apply_dir "${ROOT_DIR}/jenkins" "$APP_TFVARS"
+# apply_dir "${ROOT_DIR}/jenkins" "$APP_TFVARS" #TEMP COMMENT
 
 echo "[DONE] Apply complete."
