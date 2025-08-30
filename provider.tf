@@ -4,6 +4,11 @@ terraform {
       source  = "kreuzwerker/docker"
       version = "3.6.2"
     }
+    jenkins = {
+      source = "taiidani/jenkins"
+      version = "0.11.0"
+    }
+    
   }
 }
 
@@ -14,4 +19,10 @@ provider "docker" {
     "-o", "UserKnownHostsFile=/dev/null",
     "-i", "~/.ssh/id_rsa"
   ]
+}
+
+provider "jenkins" {
+    server_url = "http://192.168.1.110:8080/"
+    username   = "admin"
+    password   = "password"
 }

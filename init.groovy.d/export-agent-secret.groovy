@@ -14,8 +14,7 @@ import java.nio.file.attribute.PosixFilePermission
 import java.util.EnumSet
 
 // --- Config ---
-final File YAML_FILE   = new File("/jenkins/casc_configs/jenkins.yaml")
-// store in the Jenkins process user's home: ~/.jenkins
+final File YAML_FILE   = new File("/jenkins/casc_configs/config.yaml")
 final File SECRETS_DIR = new File(new File(System.getProperty("user.home")), ".jenkins")
 
 def sanitize = { String s -> (s ?: "").replaceAll(/[^A-Za-z0-9._-]/, "_") }
@@ -162,18 +161,26 @@ def writeSecret = { String name ->
 
     def safe = sanitize(name)
     def out = new File(SECRETS_DIR, "${safe}.secret")
-    out.text = secret + "\n"
 
-    // Best-effort POSIX perms: 0600
     try {
-        def p = EnumSet.of(
-            PosixFilePermission.OWNER_READ,
-            PosixFilePermission.OWNER_WRITE
-        )
-        Files.setPosixFilePermissions(out.toPath(), p)
-    } catch (Throwable ignore) { /* non-POSIX or restricted FS; continue */ }
+        if (out.exists()) {
+            println "[agent-init] WARN: Secret file '${out.absolutePath}' already exists; replacing it."
+        }
+        out.text = secret + "\n"
 
-    println "[agent-init] Wrote ${out.absolutePath}"
+        // Best-effort POSIX perms: 0600
+        try {
+            def p = EnumSet.of(
+                PosixFilePermission.OWNER_READ,
+                PosixFilePermission.OWNER_WRITE
+            )
+            Files.setPosixFilePermissions(out.toPath(), p)
+        } catch (Throwable ignore) { /* non-POSIX or restricted FS; continue */ }
+
+        println "[agent-init] Wrote ${out.absolutePath}"
+    } catch (Throwable t) {
+        println "[agent-init] ERROR: Unable to write secret file '${out.absolutePath}': ${t.message}"
+    }
 }
 
 println "[agent-init] Starting agent creation from ${YAML_FILE.absolutePath}"
