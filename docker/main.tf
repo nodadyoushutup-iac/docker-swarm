@@ -177,8 +177,8 @@ resource "docker_service" "jenkins_agent" {
 resource "null_resource" "wait_for_service" {
   depends_on = [docker_service.jenkins_controller]
   triggers = {
-    endpoint = "http://192.168.1.110:8080/whoAmI/api/json?tree=authenticated"
-    delay = "5"
+    endpoint     = "http://192.168.1.110:8080/whoAmI/api/json?tree=authenticated"
+    delay        = "5"
     max_attempts = "60"
     script_sha1  = filesha1("${path.module}/script/healthcheck.sh")
   }
