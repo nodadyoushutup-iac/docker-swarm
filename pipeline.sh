@@ -6,23 +6,22 @@ AUTO_APPROVE=false
 usage() {
   cat <<'EOF'
 Usage:
-  ./pipeline.sh [--auto-approve] [service]
+  ./pipeline.sh [--auto-approve] [tfvars]
 
 Runs: terraform init → terraform plan → terraform apply
 
-Behavior:
-  - If no service is given: use the single *.tfvars in the current directory.
-  - If service is given: use $HOME/.tfvars/<service>.tfvars
-  - Passing an explicit *.tfvars path is NOT allowed.
+  Behavior:
+    - If no tfvars path is given: use the single *.tfvars in the current directory.
+    - If tfvars path is given: use that path.
 
-Options:
-  --auto-approve  Pass -auto-approve to 'terraform apply' (non-interactive)
-  -h, --help      Show this help
+  Options:
+    --auto-approve  Pass -auto-approve to 'terraform apply' (non-interactive)
+    -h, --help      Show this help
 
 Notes:
-- By default this script prompts on apply.
-- If TF_CLI_ARGS_apply contains -auto-approve, Terraform would normally skip the prompt.
-  In interactive mode, this script temporarily removes that flag so you still get a prompt.
+  - By default this script prompts on apply.
+  - If TF_CLI_ARGS_apply contains -auto-approve, Terraform would normally skip the prompt.
+    In interactive mode, this script temporarily removes that flag so you still get a prompt.
 EOF
 }
 
@@ -39,12 +38,12 @@ done
 
 # Disallow more than one positional argument
 if [[ $# -gt 1 ]]; then
-  echo "[ERR] Too many arguments. Only an optional 'service' is allowed." >&2
+  echo "[ERR] Too many arguments. Only an optional 'tfvars' path is allowed." >&2
   usage
   exit 2
 fi
 
-SERVICE=""
+TFVARS=""
 VAR_FILE=""
 
 # Helper: find exactly one *.tfvars in CWD
@@ -55,13 +54,13 @@ pick_single_tfvars_in_cwd() {
     printf '%s\n' "${matches[0]}"
     return 0
   elif [[ ${#matches[@]} -eq 0 ]]; then
-    echo "[ERR] No *.tfvars found in current directory. Provide a service. " \
-         "Example: ./pipeline.sh proxmox" >&2
+    echo "[ERR] No *.tfvars found in current directory. Provide a tfvars path. " \
+         "Example: ./pipeline.sh path/to/proxmox.tfvars" >&2
     return 1
   else
     echo "[ERR] Multiple *.tfvars found in current directory:" >&2
     printf '  - %s\n' "${matches[@]}" >&2
-    echo "[ERR] Please specify a service instead. Example: ./pipeline.sh proxmox" >&2
+    echo "[ERR] Please specify a tfvars file instead. Example: ./pipeline.sh path/to/proxmox.tfvars" >&2
     return 1
   fi
 }
@@ -70,20 +69,15 @@ pick_single_tfvars_in_cwd() {
 if [[ $# -eq 0 ]]; then
   VAR_FILE="$(pick_single_tfvars_in_cwd)" || exit 2
 else
-  SERVICE="$1"
-  if [[ "$SERVICE" == *.tfvars ]]; then
-    echo "[ERR] Explicit .tfvars paths are not allowed. Pass a service name instead." >&2
-    exit 2
-  fi
-  VAR_FILE="$HOME/.tfvars/${SERVICE}.tfvars"
+  TFVARS="$1"
+  VAR_FILE="$TFVARS"
 fi
 
 # Pre-flight checks
 command -v terraform >/dev/null 2>&1 || { echo "[ERR] terraform not found in PATH" >&2; exit 127; }
-[[ -f "$VAR_FILE" ]] || { echo "[ERR] var-file not found: $VAR_FILE" >&2; exit 1; }
+[[ -f "$VAR_FILE" ]] || { echo "[ERR] tfvars file not found: $VAR_FILE" >&2; exit 1; }
 
-echo "[INFO] Service  : ${SERVICE:-<none>}"
-echo "[INFO] Var file : $VAR_FILE"
+echo "[INFO] TFVARS   : $VAR_FILE"
 
 echo "[STEP] terraform init"
 terraform init -input=false
