@@ -98,7 +98,7 @@ locals {
       nodes = [
         {
           permanent = {
-            name     = "terraform"
+            name     = "alpha"
             remoteFS = "/home/jenkins"
             launcher = {
               inbound = {
@@ -114,7 +114,7 @@ locals {
         },
         {
           permanent = {
-            name     = "cloud-image"
+            name     = "beta"
             remoteFS = "/home/jenkins"
             launcher = {
               inbound = {
