@@ -2,7 +2,7 @@
 set -euo pipefail
 
 DOCKER_TFVARS="$HOME/.tfvars/docker/jenkins.tfvars"
-JENKINS_TFVARS="$HOME/.tfvars/jenkins.tfvars"
+APP_TFVARS="$HOME/.tfvars/jenkins.tfvars"
 
 usage() {
   cat <<'EOT'
@@ -24,7 +24,7 @@ EOT
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --docker-tfvars) DOCKER_TFVARS="$2"; shift 2 ;;
-    --jenkins-tfvars) JENKINS_TFVARS="$2"; shift 2 ;;
+    --jenkins-tfvars) APP_TFVARS="$2"; shift 2 ;;
     -h|--help) usage; exit 0 ;;
     --) shift; break ;;
     -*) echo "[ERR] Unknown option: $1" >&2; usage; exit 2 ;;
@@ -51,6 +51,6 @@ echo "[STAGE 1] docker"
 apply_dir docker "$DOCKER_TFVARS"
 
 echo "[STAGE 2] jenkins"
-apply_dir jenkins "$JENKINS_TFVARS"
+apply_dir jenkins "$APP_TFVARS"
 
 echo "[DONE] Apply complete."

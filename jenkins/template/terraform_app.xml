@@ -15,15 +15,9 @@
                                         <defaultValue>${auto_approve}</defaultValue>
                                 </hudson.model.BooleanParameterDefinition>
                                 <hudson.model.StringParameterDefinition>
-                                        <name>DOCKER_TFVARS_FILE</name>
-                                        <description>Path to Docker tfvars file</description>
-                                        <defaultValue>${docker_tfvars}</defaultValue>
-                                        <trim>false</trim>
-                                </hudson.model.StringParameterDefinition>
-                                <hudson.model.StringParameterDefinition>
-                                        <name>JENKINS_TFVARS_FILE</name>
-                                        <description>Path to Jenkins tfvars file</description>
-                                        <defaultValue>${jenkins_tfvars}</defaultValue>
+                                        <name>APP_TFVARS_FILE</name>
+                                        <description>Path to application tfvars file</description>
+                                        <defaultValue>${app_tfvars}</defaultValue>
                                         <trim>false</trim>
                                 </hudson.model.StringParameterDefinition>
                         </parameterDefinitions>
