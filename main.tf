@@ -110,7 +110,7 @@ resource "docker_service" "jenkins_controller" {
 resource "null_resource" "wait_for_service" {
   depends_on = [docker_service.jenkins_controller]
   triggers = {
-    endpoint     = "http://192.168.1.110:8080/whoAmI/api/json?tree=authenticated"
+    endpoint     = "http://192.168.1.44:8080/whoAmI/api/json?tree=authenticated"
     delay        = "5"
     max_attempts = "60"
     script_sha1  = filesha1("${path.module}/script/healthcheck.sh")
@@ -118,7 +118,7 @@ resource "null_resource" "wait_for_service" {
   }
 
   provisioner "local-exec" {
-    command = "MAX_ATTEMPTS=60 TIMEOUT=5 bash ${path.module}/script/healthcheck.sh http://192.168.1.110:8080/whoAmI/api/json?tree=authenticated 5"
+    command = "MAX_ATTEMPTS=60 TIMEOUT=5 bash ${path.module}/script/healthcheck.sh http://192.168.1.44:8080/whoAmI/api/json?tree=authenticated 5"
   }
 }
 
@@ -128,7 +128,7 @@ module "jenkins_agent" {
   source     = "./modules/jenkins-agent"
 
   name        = each.value.permanent.name
-  jenkins_url = "http://192.168.1.110:8080"
+  jenkins_url = "http://192.168.1.44:8080"
 
   agent_entrypoint_config_id   = docker_config.agent_entrypoint.id
   agent_entrypoint_config_name = docker_config.agent_entrypoint.name
