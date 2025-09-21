@@ -34,18 +34,5 @@ pipeline {
         }
       }
     }
-    stage('Jenkins') {
-      steps {
-        script {
-          sh 'terraform -chdir=jenkins init -input=false'
-          if (params.AUTO_APPROVE) {
-            sh "terraform -chdir=jenkins apply -input=false -auto-approve -var-file=${params.APP_TFVARS_FILE}"
-          } else {
-            sh "terraform -chdir=jenkins plan -input=false -var-file=${params.APP_TFVARS_FILE}"
-            sh "terraform -chdir=jenkins apply -var-file=${params.APP_TFVARS_FILE}"
-          }
-        }
-      }
-    }
   }
 }
