@@ -1,5 +1,8 @@
 terraform {
-  backend "s3" {}
+  backend "s3" {
+    bucket = "terraform"
+    key    = "docker-swarm/terraform.tfstate"
+  }
 
   required_providers {
     docker = {
