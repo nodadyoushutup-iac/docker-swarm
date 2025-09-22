@@ -8,6 +8,13 @@ pipeline {
             error 'AUTO_APPROVE parameter is not set'
           }
 
+          def backendConfig = params.get('BACKEND_CONFIG_FILE', "${env.HOME}/.tfvars/minio.backend.hcl")
+          if (!backendConfig?.trim()) {
+            error 'BACKEND_CONFIG_FILE parameter is not set'
+          }
+          sh "test -f '${backendConfig}'"
+          env.BACKEND_CONFIG_FILE = backendConfig
+
           def files = [
             DOCKER_TFVARS_FILE: params.DOCKER_TFVARS_FILE,
             APP_TFVARS_FILE   : params.APP_TFVARS_FILE
@@ -24,7 +31,7 @@ pipeline {
     stage('Docker') {
       steps {
         script {
-          sh 'terraform -chdir=docker init -input=false'
+          sh "terraform -chdir=docker init -input=false -backend-config='${env.BACKEND_CONFIG_FILE}'"
           if (params.AUTO_APPROVE) {
             sh "terraform -chdir=docker apply -input=false -auto-approve -var-file=${params.DOCKER_TFVARS_FILE}"
           } else {
