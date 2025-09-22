@@ -17,7 +17,7 @@ echo "[STAGE 0] verify params"
 apply_dir() {
   local TFVARS="$1"
   echo "[STEP] terraform init"
-  terraform init -input=false -backend-config="$BACKEND_CONFIG_PATH"
+  terraform init -backend-config="$BACKEND_CONFIG_PATH"
 
   echo "[STEP] terraform plan"
   terraform plan -input=false ${TFVARS:+-var-file="$TFVARS"}
