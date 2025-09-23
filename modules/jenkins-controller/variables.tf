@@ -57,13 +57,13 @@ variable "dns_nameservers" {
 }
 
 variable "healthcheck_script_path" {
-  description = "Path to the script that validates the Jenkins controller health"
+  description = "Path to the script that validates the Jenkins controller health (defaults to module-provided script)"
   type        = string
   default     = null
 }
 
 variable "export_agent_secret_path" {
-  description = "Path to the Groovy script responsible for exporting the agent secret"
+  description = "Path to the Groovy script responsible for exporting the agent secret (defaults to module-provided script)"
   type        = string
   default     = null
 }

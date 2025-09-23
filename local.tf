@@ -1,4 +1,6 @@
 locals {
+  controller_url = "http://192.168.1.44:8080"
+
   casc_config = {
     appearance = {
       pipelineGraphView = {

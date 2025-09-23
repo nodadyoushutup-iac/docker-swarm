@@ -23,7 +23,7 @@ resource "docker_service" "agent" {
       image = "ghcr.io/nodadyoushutup/jenkins-agent:0.0.1"
 
       env = {
-        JENKINS_URL = "http://192.168.1.44:8080"
+        JENKINS_URL        = var.jenkins_url
         JENKINS_AGENT_NAME = var.name
       }
 
