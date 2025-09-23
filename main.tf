@@ -91,6 +91,12 @@ resource "docker_service" "jenkins_controller" {
         start_period = "1m"
       }
     }
+    placement {
+      platforms {
+        os           = "linux"
+        architecture = "arm64"
+      }
+    }
   }
 
   endpoint_spec {
