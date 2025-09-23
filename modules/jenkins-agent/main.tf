@@ -1,14 +1,3 @@
-terraform {
-  required_providers {
-    docker = {
-      source = "kreuzwerker/docker"
-    }
-    random = {
-      source = "hashicorp/random"
-    }
-  }
-}
-
 resource "docker_volume" "agent" {
   name = "jenkins-agent-${var.name}"
 }

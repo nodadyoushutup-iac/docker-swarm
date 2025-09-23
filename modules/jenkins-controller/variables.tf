@@ -9,12 +9,6 @@ variable "controller_name" {
   default     = "jenkins-controller"
 }
 
-variable "controller_image" {
-  description = "Container image to deploy for the Jenkins controller"
-  type        = string
-  default     = "ghcr.io/nodadyoushutup/jenkins-controller:0.0.1"
-}
-
 variable "admin_username" {
   description = "Username for the Jenkins administrator account"
   type        = string

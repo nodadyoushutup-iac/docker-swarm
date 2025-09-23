@@ -1,11 +1,3 @@
-terraform {
-  required_providers {
-    docker = {
-      source = "kreuzwerker/docker"
-    }
-  }
-}
-
 resource "docker_volume" "controller" {
   name = var.controller_name
 }
@@ -25,7 +17,7 @@ resource "docker_service" "controller" {
 
   task_spec {
     container_spec {
-      image = var.controller_image
+      image = "ghcr.io/nodadyoushutup/jenkins-controller:0.0.2"
 
       env = {
         JAVA_OPTS                       = "-Djenkins.install.runSetupWizard=false"
@@ -76,11 +68,11 @@ resource "docker_service" "controller" {
         file_name   = "/jenkins/casc_configs/config.yaml"
       }
 
-      configs {
-        config_id   = docker_config.export_agent_secret.id
-        config_name = docker_config.export_agent_secret.name
-        file_name   = "/usr/share/jenkins/ref/init.groovy.d/export-agent-secret.groovy"
-      }
+      # configs {
+      #   config_id   = docker_config.export_agent_secret.id
+      #   config_name = docker_config.export_agent_secret.name
+      #   file_name   = "/usr/share/jenkins/ref/init.groovy.d/export-agent-secret.groovy"
+      # }
 
       dns_config {
         nameservers = var.dns_nameservers
@@ -132,14 +124,4 @@ resource "null_resource" "wait_for_service" {
   provisioner "local-exec" {
     command = "MAX_ATTEMPTS=${var.healthcheck_max_attempts} TIMEOUT=${var.healthcheck_timeout_seconds} bash ${local.resolved_healthcheck_script_path} ${var.healthcheck_endpoint} ${var.healthcheck_delay_seconds}"
   }
-}
-
-output "service_id" {
-  description = "ID of the Jenkins controller docker service"
-  value       = docker_service.controller.id
-}
-
-output "wait_for_service_id" {
-  description = "ID of the null resource waiting for the controller service"
-  value       = null_resource.wait_for_service.id
 }
