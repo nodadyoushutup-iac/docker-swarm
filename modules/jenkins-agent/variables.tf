@@ -9,7 +9,7 @@ variable "jenkins_url" {
 }
 
 variable "agent_entrypoint_script_path" {
-  description = "Path to the Jenkins agent entrypoint script"
+  description = "Path to the Jenkins agent entrypoint script (defaults to module-provided script)"
   type        = string
   default     = null
 }

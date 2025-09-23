@@ -2,7 +2,7 @@ module "jenkins_controller" {
   source = "./modules/jenkins-controller"
 
   casc_config          = local.casc_config
-  healthcheck_endpoint = "http://192.168.1.44:8080/whoAmI/api/json?tree=authenticated"
+  healthcheck_endpoint = format("%s/whoAmI/api/json?tree=authenticated", local.controller_url)
 }
 
 module "jenkins_agent" {
@@ -11,4 +11,5 @@ module "jenkins_agent" {
   source     = "./modules/jenkins-agent"
 
   name        = each.value.permanent.name
+  jenkins_url = local.controller_url
 }
