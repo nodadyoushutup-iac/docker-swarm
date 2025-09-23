@@ -71,5 +71,11 @@ resource "docker_service" "agent" {
 
       command = ["/bin/sh", "-c", "/agent-entrypoint.sh"]
     }
+    placement {
+      platforms {
+        os           = "linux"
+        architecture = "arm64"
+      }
+    }
   }
 }
