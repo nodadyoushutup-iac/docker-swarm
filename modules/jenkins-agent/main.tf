@@ -3,6 +3,9 @@ terraform {
     docker = {
       source = "kreuzwerker/docker"
     }
+    random = {
+      source = "hashicorp/random"
+    }
   }
 }
 
@@ -10,9 +13,13 @@ resource "docker_volume" "agent" {
   name = "jenkins-agent-${var.name}"
 }
 
+resource "random_id" "agent_entrypoint_suffix" {
+  byte_length = 4
+}
+
 resource "docker_config" "agent_entrypoint" {
-  name = local.agent_entrypoint_config_name
-  data = base64encode(file(local.resolved_agent_entrypoint_script_path))
+  name = "agent-entrypoint-${var.name}-${random_id.agent_entrypoint_suffix.hex}.sh"
+  data = base64encode(local.agent_entrypoint_script_content)
 }
 
 resource "docker_service" "agent" {
