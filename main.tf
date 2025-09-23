@@ -1,6 +1,6 @@
 module "jenkins_controller" {
-  # source = "./modules/jenkins-controller/infra"
-  source = "github.com/nodadyoushutup/jenkins-controller//infra?ref=main"
+  source = "./modules/jenkins-controller/app" # local use when repo is cloned to this location
+  # source = "github.com/nodadyoushutup/jenkins-controller//app?ref=main"
 
   casc_config          = local.casc_config
   healthcheck_endpoint = format("%s/whoAmI/api/json?tree=authenticated", local.controller_url)
