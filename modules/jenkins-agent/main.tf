@@ -6,22 +6,6 @@ terraform {
   }
 }
 
-variable "name" {
-  description = "Name of the Jenkins agent"
-  type        = string
-}
-
-variable "agent_entrypoint_script_path" {
-  description = "Path to the Jenkins agent entrypoint script"
-  type        = string
-  default     = null
-}
-
-locals {
-  resolved_agent_entrypoint_script_path = coalesce(var.agent_entrypoint_script_path, "${path.root}/script/agent-entrypoint.sh")
-  agent_entrypoint_config_name          = "agent-entrypoint-${var.name}.sh"
-}
-
 resource "docker_volume" "agent" {
   name = "jenkins-agent-${var.name}"
 }
