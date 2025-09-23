@@ -50,26 +50,8 @@ variable "dns_nameservers" {
   default     = ["1.1.1.1", "8.8.8.8"]
 }
 
-variable "healthcheck_script_path" {
-  description = "Path to the script that validates the Jenkins controller health (defaults to module-provided script)"
-  type        = string
-  default     = null
-}
-
-variable "export_agent_secret_path" {
-  description = "Path to the Groovy script responsible for exporting the agent secret (defaults to module-provided script)"
-  type        = string
-  default     = null
-}
-
 variable "casc_config_name" {
   description = "Name used for the Jenkins Configuration as Code docker config"
   type        = string
   default     = "casc-config.yaml"
-}
-
-variable "export_agent_secret_name" {
-  description = "Name used for the Groovy docker config that exports the agent secret"
-  type        = string
-  default     = "export-agent-secret.groovy"
 }

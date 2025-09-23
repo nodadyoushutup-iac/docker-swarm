@@ -7,17 +7,12 @@ resource "docker_config" "casc_config" {
   data = base64encode(yamlencode(var.casc_config))
 }
 
-resource "docker_config" "export_agent_secret" {
-  name = var.export_agent_secret_name
-  data = base64encode(file(local.resolved_export_agent_secret_path))
-}
-
 resource "docker_service" "controller" {
   name = var.controller_name
 
   task_spec {
     container_spec {
-      image = "ghcr.io/nodadyoushutup/jenkins-controller:0.0.2"
+      image = "ghcr.io/nodadyoushutup/jenkins-controller:0.0.3"
 
       env = {
         JAVA_OPTS                       = "-Djenkins.install.runSetupWizard=false"
@@ -68,12 +63,6 @@ resource "docker_service" "controller" {
         file_name   = "/jenkins/casc_configs/config.yaml"
       }
 
-      # configs {
-      #   config_id   = docker_config.export_agent_secret.id
-      #   config_name = docker_config.export_agent_secret.name
-      #   file_name   = "/usr/share/jenkins/ref/init.groovy.d/export-agent-secret.groovy"
-      # }
-
       dns_config {
         nameservers = var.dns_nameservers
       }
@@ -118,10 +107,10 @@ resource "null_resource" "wait_for_service" {
     endpoint     = var.healthcheck_endpoint
     delay        = tostring(var.healthcheck_delay_seconds)
     max_attempts = tostring(var.healthcheck_max_attempts)
-    script_sha1  = filesha1(local.resolved_healthcheck_script_path)
+    script_sha1  = filesha1("${path.module}/healthcheck.sh")
   }
 
   provisioner "local-exec" {
-    command = "MAX_ATTEMPTS=${var.healthcheck_max_attempts} TIMEOUT=${var.healthcheck_timeout_seconds} bash ${local.resolved_healthcheck_script_path} ${var.healthcheck_endpoint} ${var.healthcheck_delay_seconds}"
+    command = "MAX_ATTEMPTS=${var.healthcheck_max_attempts} TIMEOUT=${var.healthcheck_timeout_seconds} bash ${path.module}/healthcheck.sh ${var.healthcheck_endpoint} ${var.healthcheck_delay_seconds}"
   }
 }
