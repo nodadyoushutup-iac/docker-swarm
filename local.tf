@@ -19,57 +19,17 @@ locals {
             credentials = [
               {
                 string = {
-                  scope       = "GLOBAL"
-                  id          = "MINIO_ENDPOINT"
-                  secret      = "http://192.168.1.100:9000"
-                  description = "Minio Endpoint"
-                }
-              },
-              {
-                string = {
-                  scope       = "GLOBAL"
-                  id          = "MINIO_ACCESS_KEY"
-                  secret      = "yjBwkhrm6HIyuptyq9p5"
-                  description = "Minio Access Key"
-                }
-              },
-              {
-                string = {
-                  scope       = "GLOBAL"
-                  id          = "MINIO_SECRET_KEY"
-                  secret      = "XCtPnMaCEDknilFmytugOffw5c2VKnIcSOgGn0oa"
-                  description = "Minio Secret Key"
-                }
-              },
-              {
-                string = {
-                  scope       = "GLOBAL"
-                  id          = "MINIO_CONFIG_BUCKET"
-                  secret      = "config"
-                  description = "Minio Config Bucket"
-                }
-              },
-              {
-                string = {
-                  scope       = "GLOBAL"
-                  id          = "MINIO_TERRAFORM_BUCKET"
-                  secret      = "terraform"
-                  description = "Minio Terraform Bucket"
-                }
-              },
-              {
-                string = {
-                  scope       = "GLOBAL"
-                  id          = "CLOUD_IMAGE_REPOSITORY_URL"
-                  secret      = "https://cir.nodadyoushutup.com/"
+                  scope = "GLOBAL"
+                  id = "CLOUD_IMAGE_REPOSITORY_URL"
+                  secret = "https://cir.nodadyoushutup.com/"
                   description = "Cloud image repository url"
                 }
               },
               {
                 string = {
-                  scope       = "GLOBAL"
-                  id          = "CLOUD_IMAGE_REPOSITORY_APIKEY"
-                  secret      = "S#nvhs89vher"
+                  scope = "GLOBAL"
+                  id = "CLOUD_IMAGE_REPOSITORY_APIKEY"
+                  secret = "S#nvhs89vher"
                   description = "Cloud image repository api key"
                 }
               }
