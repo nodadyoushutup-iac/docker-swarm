@@ -11,11 +11,6 @@ variable "name" {
   type        = string
 }
 
-variable "jenkins_url" {
-  description = "URL of the Jenkins controller"
-  type        = string
-}
-
 variable "agent_entrypoint_script_path" {
   description = "Path to the Jenkins agent entrypoint script"
   type        = string
@@ -44,7 +39,7 @@ resource "docker_service" "agent" {
       image = "ghcr.io/nodadyoushutup/jenkins-agent:0.0.1"
 
       env = {
-        JENKINS_URL        = var.jenkins_url
+        JENKINS_URL = "http://192.168.1.44:8080"
         JENKINS_AGENT_NAME = var.name
       }
 

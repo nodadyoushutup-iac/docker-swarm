@@ -11,5 +11,4 @@ module "jenkins_agent" {
   source     = "./modules/jenkins-agent"
 
   name        = each.value.permanent.name
-  jenkins_url = "http://192.168.1.44:8080"
 }
