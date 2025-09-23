@@ -6,8 +6,34 @@ terraform {
   }
 }
 
+variable "name" {
+  description = "Name of the Jenkins agent"
+  type        = string
+}
+
+variable "jenkins_url" {
+  description = "URL of the Jenkins controller"
+  type        = string
+}
+
+variable "agent_entrypoint_script_path" {
+  description = "Path to the Jenkins agent entrypoint script"
+  type        = string
+  default     = null
+}
+
+locals {
+  resolved_agent_entrypoint_script_path = coalesce(var.agent_entrypoint_script_path, "${path.root}/script/agent-entrypoint.sh")
+  agent_entrypoint_config_name          = "agent-entrypoint-${var.name}.sh"
+}
+
 resource "docker_volume" "agent" {
   name = "jenkins-agent-${var.name}"
+}
+
+resource "docker_config" "agent_entrypoint" {
+  name = local.agent_entrypoint_config_name
+  data = base64encode(file(local.resolved_agent_entrypoint_script_path))
 }
 
 resource "docker_service" "agent" {
@@ -59,8 +85,8 @@ resource "docker_service" "agent" {
       }
 
       configs {
-        config_id   = var.agent_entrypoint_config_id
-        config_name = var.agent_entrypoint_config_name
+        config_id   = docker_config.agent_entrypoint.id
+        config_name = docker_config.agent_entrypoint.name
         file_name   = "/agent-entrypoint.sh"
         file_mode   = 511
       }
@@ -71,6 +97,7 @@ resource "docker_service" "agent" {
 
       command = ["/bin/sh", "-c", "/agent-entrypoint.sh"]
     }
+
     placement {
       platforms {
         os           = "linux"
