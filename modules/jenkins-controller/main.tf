@@ -122,6 +122,7 @@ resource "null_resource" "wait_for_service" {
   depends_on = [docker_service.controller]
 
   triggers = {
+    always_run  = timestamp()
     endpoint     = var.healthcheck_endpoint
     delay        = tostring(var.healthcheck_delay_seconds)
     max_attempts = tostring(var.healthcheck_max_attempts)
