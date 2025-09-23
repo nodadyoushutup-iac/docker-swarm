@@ -1,10 +1,10 @@
-# module "jenkins_controller" {
-#   source = "./modules/jenkins-controller/app" # local use when repo is cloned to this location
-#   # source = "github.com/nodadyoushutup/jenkins-controller//app?ref=main"
+module "jenkins_controller" {
+  source = "./modules/jenkins-controller/terraform/app" # local use when repo is cloned to this location
+  # source = "github.com/nodadyoushutup/jenkins-controller//app?ref=main"
 
-#   casc_config          = local.casc_config
-#   healthcheck_endpoint = format("%s/whoAmI/api/json?tree=authenticated", local.controller_url)
-# }
+  casc_config          = local.casc_config
+  healthcheck_endpoint = format("%s/whoAmI/api/json?tree=authenticated", local.controller_url)
+}
 
 # module "jenkins_agent" {
 #   depends_on = [module.jenkins_controller]
