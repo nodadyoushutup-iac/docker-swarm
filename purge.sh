@@ -12,16 +12,14 @@ WARN_DRAIN="--drain will stop and remove ALL containers on this node (including 
 force=false
 drain=false
 restart=false
-services=false
 
 usage() {
   cat <<EOF
-Usage: $(basename "$0") [--force] [--drain] [--services] [--restart]
+Usage: $(basename "$0") [--force] [--drain] [--restart]
 
   --force     Skip interactive confirmation.
   --drain     (Manager node only) Temporarily set this node to DRAIN, stop/remove ALL containers,
               prune everything, then restore previous availability. Keeps node in the swarm.
-  --services  (Manager node only) Remove ALL swarm services on this node after cleanup.
   --restart   Restart the Docker daemon at the end (systemd environments).
 
 Notes:
@@ -32,10 +30,9 @@ EOF
 
 for arg in "${@:-}"; do
   case "$arg" in
-    --force)    force=true ;;
-    --drain)    drain=true ;;
-    --services) services=true ;;
-    --restart)  restart=true ;;
+    --force)   force=true ;;
+    --drain)   drain=true ;;
+    --restart) restart=true ;;
     -h|--help) usage; exit 0 ;;
     *) echo "Unknown option: $arg" >&2; usage; exit 1 ;;
   esac
@@ -64,11 +61,6 @@ if $is_in_swarm; then
   [[ "$ctrl" == "true" ]] && { role="manager"; is_manager=true; }
 fi
 
-if $services && ! $is_manager; then
-  echo "ERROR: --services requires running on a swarm MANAGER." >&2
-  exit 1
-fi
-
 echo "==> Swarm: $($is_in_swarm && echo "JOINED ($role)" || echo "not joined")"
 
 echo
@@ -77,18 +69,12 @@ echo "  • Stop & remove ALL standalone containers (not created by swarm)."
 if $drain; then
   echo "  • (DRAIN MODE) Stop & remove ALL containers (including swarm tasks) on this node."
 fi
-if $services; then
-  echo "  • Remove ALL swarm services."
-fi
 echo "  • Prune UNUSED images, volumes, networks, and builder cache."
 echo "  • Preserve swarm membership (no 'docker swarm leave', no deletion of /var/lib/docker/swarm)."
 echo
 echo "Caveats:"
 echo "  • ${WARN_VOL}"
 $drain && echo "  • ${WARN_DRAIN}"
-if $services; then
-  echo "  • Removes all swarm services from the manager."
-fi
 echo
 
 if [[ $force == false ]]; then
@@ -162,16 +148,6 @@ if $drain; then
     docker node update --availability "$prev_avail" self
   else
     echo "==> Leaving node availability in DRAIN (explicit or unchanged)."
-  fi
-fi
-
-if $services; then
-  echo "==> Removing swarm services..."
-  mapfile -t svc_ids < <(docker service ls -q)
-  if (( ${#svc_ids[@]} )); then
-    docker service rm "${svc_ids[@]}"
-  else
-    echo "    No swarm services present."
   fi
 fi
 
