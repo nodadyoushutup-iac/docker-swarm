@@ -15,7 +15,7 @@ resource "docker_service" "agent" {
 
   task_spec {
     container_spec {
-      image = "ghcr.io/nodadyoushutup/jenkins-agent:3283.v92c105e0f819-7"
+      image = "ghcr.io/nodadyoushutup/jenkins-agent:0.0.1"
 
       env = {
         JENKINS_URL        = var.jenkins_url
