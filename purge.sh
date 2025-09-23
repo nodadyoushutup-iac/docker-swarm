@@ -9,10 +9,10 @@ set -euo pipefail
 WARN_VOL="This will remove UNUSED Docker volumes. Named volumes still attached to running containers (incl. swarm tasks) are preserved."
 WARN_DRAIN="--drain will stop and remove ALL containers on this node (including swarm tasks). Services will reschedule elsewhere if possible."
 
-force=false
+force=true
 drain=false
 restart=false
-services=false
+services=true
 
 usage() {
   cat <<EOF

@@ -22,7 +22,7 @@ resource "docker_service" "jenkins_controller" {
 
   task_spec {
     container_spec {
-      image = "ghcr.io/nodadyoushutup/jenkins-controller:2.528"
+      image = "ghcr.io/nodadyoushutup/jenkins-controller:0.0.1"
 
       env = {
         JAVA_OPTS                       = "-Djenkins.install.runSetupWizard=false"
