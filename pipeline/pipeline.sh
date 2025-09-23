@@ -18,9 +18,9 @@ echo "[STEP] terraform init"
 terraform init -backend-config="$BACKEND_CONFIG_PATH"
 
 echo "[STEP] terraform plan"
-terraform plan -input=false ${TFVARS:+-var-file="$TFVARS"}
+terraform plan -input=false -var-file="$TFVARS_PATH"
 
 echo "[STEP] terraform apply"
-terraform apply -input=false -auto-approve ${TFVARS:+-var-file="$TFVARS_PATH"}
+terraform apply -input=false -auto-approve -var-file="$TFVARS_PATH"
 
 echo "[DONE] Apply complete."
